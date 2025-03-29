@@ -5,6 +5,8 @@ make a dummy dataset to make embeddings and play with visualization
 
 word input -> word nebula -> 3d graph
 
+```python3 3d_arbol_semantic.py```
+
 # En 3d arbol semantic
 
 Z-Axis: calculate_depth() places nodes by their hierarchy level (lower-level concepts = higher Z-values).
