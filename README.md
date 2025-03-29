@@ -7,6 +7,10 @@ word input -> word nebula -> 3d graph
 
 ```python3 3d_arbol_semantic.py```
 
+https://karen-pal.github.io/semantic_geographies/tree_graph_visualization.html
+
+https://karen-pal.github.io/semantic_geographies/nurture_graph_visualization.html
+
 # En 3d arbol semantic
 
 Z-Axis: calculate_depth() places nodes by their hierarchy level (lower-level concepts = higher Z-values).
