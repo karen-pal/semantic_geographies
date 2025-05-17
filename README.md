@@ -29,3 +29,18 @@ En el código se puede modificar para que use distintas similarities.
 - The depth of the synsets in the taxonomy.
 
 Wu-Palmer similarity relies heavily on hierarchical depth, which might not work well for edge cases. Switching to a different metric, such as **Leacock-Chodorow similarity (lch_similarity)**, which focuses on path length, might yield better results.
+
+# Text semantic
+## Installation
+import nltk
+nltk.download('punkt_tab')
+
+## Usage
+python text_semantic_space.py your_text_file.txt --language english --output_dir results --clusters 5
+
+
+Places words in 3D space based on semantic relationships
+X and Y coordinates are determined by semantic similarity clusters
+Z coordinate represents hypernym depth (how abstract or concrete a word is)
+Word size represents frequency in the text
+
