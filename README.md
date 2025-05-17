@@ -56,6 +56,20 @@ Preprocessing Methods:
 - POS_BALANCED: Words balanced across different parts of speech
 - DIVERSE: Maximally diverse set of words to cover different semantic areas
 
+```python
+# Use mixed frequency bands (default)
+python text_semantic_space.py technical_document.txt
+
+# Extract rare words to find domain-specific terms
+python text_semantic_space.py technical_document.txt --method RARE
+
+# Compare documents using keyword extraction
+python text_semantic_space.py doc1.txt doc2.txt --method KEYWORD
+
+# Get a diverse set of words
+python text_semantic_space.py novel.txt --method DIVERSE --max_words 150
+```
+
 ## Arguments
 ### max words
 The default is 100. when choosing max_words be careful:
