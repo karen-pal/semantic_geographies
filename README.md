@@ -32,15 +32,15 @@ Wu-Palmer similarity relies heavily on hierarchical depth, which might not work 
 
 # Text semantic
 ## Installation
-import nltk
-nltk.download('punkt_tab')
+```import nltk```
+```nltk.download('punkt_tab')```
 
 ## Usage
-python text_semantic_space.py your_text_file.txt --language english --output_dir results --clusters 5
+```python text_semantic_space.py your_text_file.txt --language english --output_dir results --clusters 5```
 
 
-Places words in 3D space based on semantic relationships
-X and Y coordinates are determined by semantic similarity clusters
-Z coordinate represents hypernym depth (how abstract or concrete a word is)
-Word size represents frequency in the text
+- Places words in 3D space based on semantic relationships
+- X and Y coordinates are determined by semantic similarity clusters
+- Z coordinate represents hypernym depth (how abstract or concrete a word is)
+- Word size represents frequency in the text
 
