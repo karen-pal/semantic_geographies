@@ -45,6 +45,16 @@ nltk.download('punkt_tab')
 - Takes the top 25% of most similar word pairs (or a minimum number)
 - Ensures that each node has at least one connection if possible
 - Adds "best match" connections for words that would otherwise be isolated
+## Preprocessor module
+Preprocessing Methods:
+
+- FREQUENCY: Most common words (original approach)
+- RARE: Least common words (for finding domain-specific terms)
+- MIXED_FREQ: A balanced mix of common, medium, and rare words (now the default)
+- TF_IDF: Words with high TF-IDF scores (important for specific document)
+- KEYWORD: Keywords extracted using statistical and POS-based approach
+- POS_BALANCED: Words balanced across different parts of speech
+- DIVERSE: Maximally diverse set of words to cover different semantic areas
 
 ## Arguments
 ### max words
