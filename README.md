@@ -1,3 +1,5 @@
+#3d arbol semantic
+## Description
 make arbol 3d?
 
 make a dummy dataset to make embeddings and play with visualization
@@ -5,7 +7,6 @@ make a dummy dataset to make embeddings and play with visualization
 
 word input -> word nebula -> 3d graph
 
-# En 3d arbol semantic
 
 Z-Axis: calculate_depth() places nodes by their hierarchy level (lower-level concepts = higher Z-values).
 
@@ -27,11 +28,13 @@ Wu-Palmer similarity relies heavily on hierarchical depth, which might not work 
 
 # Text semantic
 ## Installation
+```python
 import nltk
 nltk.download('punkt_tab')
+```
 
 ## Usage
-python text_semantic_space.py your_text_file.txt --language english --output_dir results --clusters 5
+```python text_semantic_space.py your_text_file.txt --language english --output_dir results --clusters 5```
 
 
 - X-axis: "Topic Similarity" - Words with similar topics or domains appear closer along this axis
