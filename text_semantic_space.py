@@ -218,7 +218,8 @@ def create_semantic_graph(words_with_synsets):
     for word, synset_name, freq in words_with_synsets:
         graph.add_node(word, synset=synset_name, frequency=freq)
     
-    # Add edges based on semantic similarity
+    # Calculate all pairwise similarities
+    similarities = []
     for i, (word1, synset_name1, _) in enumerate(words_with_synsets):
         syn1 = wn.synset(synset_name1)
         
@@ -231,9 +232,41 @@ def create_semantic_graph(words_with_synsets):
             # Calculate similarity
             sim = syn1.path_similarity(syn2)
             
-            # Add edge if similarity is above threshold
-            if sim is not None and sim > 0.2:  # Adjust threshold as needed
-                graph.add_edge(word1, word2, weight=sim)
+            if sim is not None:
+                similarities.append((word1, word2, sim))
+    
+    # If we have similarities, determine threshold dynamically
+    if similarities:
+        # Sort by similarity
+        similarities.sort(key=lambda x: x[2], reverse=True)
+        
+        # Take top 25% as significant relationships (but minimum of n)
+        n = max(len(words_with_synsets), 5)  # Ensure at least n connections
+        top_n = min(n, len(similarities))
+        
+        # Add edges for top connections
+        for word1, word2, sim in similarities[:top_n]:
+            graph.add_edge(word1, word2, weight=sim)
+            
+        # Ensure each node has at least one connection if possible
+        connected_nodes = set()
+        for word1, word2, _ in similarities[:top_n]:
+            connected_nodes.add(word1)
+            connected_nodes.add(word2)
+        
+        # For unconnected nodes, add their best connection
+        unconnected_nodes = set(word for word, _, _ in words_with_synsets) - connected_nodes
+        for node in unconnected_nodes:
+            best_sim = 0
+            best_edge = None
+            
+            for word1, word2, sim in similarities:
+                if (word1 == node or word2 == node) and sim > best_sim:
+                    best_sim = sim
+                    best_edge = (word1, word2)
+            
+            if best_edge:
+                graph.add_edge(best_edge[0], best_edge[1], weight=best_sim)
     
     return graph
 
@@ -278,7 +311,7 @@ def plot_3d_semantic_space(words_with_synsets, positions, clusters, output_dir=N
             colorscale='Viridis',
             opacity=0.8,
             showscale=True,
-            colorbar=dict(title='Semantic Cluster')
+            colorbar=dict(title='Topic Cluster')
         ),
         text=words,
         hoverinfo='text',
@@ -305,20 +338,20 @@ def plot_3d_semantic_space(words_with_synsets, positions, clusters, output_dir=N
         y=edge_y,
         z=edge_z,
         mode='lines',
-        line=dict(width=1, color='rgba(50, 50, 50, 0.7)'),
+        line=dict(width=2, color='rgba(10, 10, 10, 0.8)'),
         hoverinfo='none'
     )
     
     # Create figure
     fig = go.Figure(data=[edge_trace, node_trace])
     
-    # Update layout
+    # Update layout with more intuitive axis names
     fig.update_layout(
-        title="3D Semantic Space of Text",
+        title="Semantic Landscape of Text",
         scene=dict(
-            xaxis_title="Semantic Dimension 1",
-            yaxis_title="Semantic Dimension 2",
-            zaxis_title="Hypernym Depth",
+            xaxis_title="Topic Similarity",
+            yaxis_title="Conceptual Relatedness",
+            zaxis_title="Abstractness ↔ Concreteness",
             xaxis=dict(showgrid=True, zeroline=False),
             yaxis=dict(showgrid=True, zeroline=False),
             zaxis=dict(showgrid=True, zeroline=False),
@@ -405,6 +438,48 @@ def process_text_file_to_semantic_space(text_file, language='english', output_di
     # Step 5: Plot the 3D semantic space
     fig = plot_3d_semantic_space(words_with_synsets, positions, clusters, output_dir)
     
+    # Step 6: Create explanation file
+    if output_dir:
+        explanation_path = os.path.join(output_dir, "semantic_space_explanation.md")
+        with open(explanation_path, 'w', encoding='utf-8') as file:
+            file.write("""# Understanding the Semantic Landscape Visualization
+
+## What am I looking at?
+
+This 3D visualization represents the semantic relationships between common words in your text. Think of it as a "meaning map" where:
+
+- **Words closer together** have more similar meanings
+- **Word size** indicates how frequently the word appears in your text
+- **Colors** represent different topic clusters
+- **Lines** connect words with directly related meanings
+- **Height** represents how abstract (higher) or concrete (lower) a word is
+
+## How to interpret the axes:
+
+- **X-axis (Topic Similarity)**: Words with similar topics or domains appear closer along this axis
+- **Y-axis (Conceptual Relatedness)**: Words that are conceptually related appear closer along this axis
+- **Z-axis (Abstractness ↔ Concreteness)**: Words higher up are more abstract concepts, while words lower down are more concrete
+
+## Exploring the visualization:
+
+- **Rotate** the view by clicking and dragging
+- **Zoom** with the scroll wheel
+- **Hover** over words to see their full label
+- **Look for clusters** of related words (same color)
+- **Notice connections** between words (connected by lines)
+
+## Example insights:
+
+- Words in the same cluster (color) tend to relate to similar topics
+- Words at the top of the space (higher Z values) represent abstract concepts
+- Words at the bottom (lower Z values) represent concrete objects or actions
+- Isolated words may have unique meanings within your text
+- Highly connected words are semantic hubs that bridge different concepts
+
+This visualization helps reveal the underlying semantic structure and thematic organization of your text.
+""")
+        print(f"Explanation saved to {explanation_path}")
+    
     return fig
 
 # Example usage
@@ -425,3 +500,4 @@ if __name__ == "__main__":
         output_dir=args.output_dir,
         n_clusters=args.clusters
     )
+
